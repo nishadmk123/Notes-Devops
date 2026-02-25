@@ -1,4 +1,4 @@
-IAM: (Amazon Machine Image)
+IAM: (Identity Access Management)
 
 Q.What is IAM (Identity and Access Management)?
 It controles who can access aws and what they are allowed to do.
