@@ -1,0 +1,112 @@
+AMI: (Amazon Machine Image)
+
+Q.What is an AMI in AWS?
+An AMI (AmazonMachine Image) is a pre-configured template used to launch virtual servers (EC2 instances) in Amazon Web Services.
+When you launch an EC2 from an AMI, AWS copies this template and creates a new server.
+An AMI includes:
+Root volume snapshot (EBS snapshot)
+OS + packages
+Launch permissions
+Block device mapping (disk info)
+
+Note: AMI is a preconfigured OS snapshot used to launch EC2 instances, and Launch Template is a configuration blueprint that uses the AMI to define how instances should be created.
+
+Q.Types of AMIs
+| Type                        | Who creates it      | Example use                     |
+| --------------------------- | ------------------- | ------------------------------- |
+| **AWS Provided AMI**        | AWS                 | Amazon Linux, Ubuntu, Windows   |
+| **Marketplace AMI**         | Third-party vendors | cPanel, Fortinet firewall       |
+| **Community AMI**           | Public users        | Custom shared images            |
+| **Custom AMI (Golden AMI)** | You/Your org        | Preinstalled app stack for team |
+
+Q.Step-by-step: How to Create an AMI (Image) from a running EC2
+In amazon Web Services console:
+Go to EC2 → Instances
+Select your running instance
+Click Actions → Image and templates → Create Image
+Give Image name
+Choose No reboot (optional) or allow reboot (safer)
+Click Create Image
+Behind the scenes: AWS creates EBS snapshot and Registers new AMI
+
+Q.Step-by-step: How to Create an Image Template (Launch Template)
+A Launch Template is not an image.
+It is a configuration template that tells AWS how to launch EC2 using an AMI.
+
+It contains:
+AMI ID
+Instance type
+Key pair
+Security group
+Subnet
+User data script
+IAM role
+
+Steps:
+Go to EC2 → Launch Templates
+Click Create launch template
+Provide name
+Select AMI ID (your custom AMI)
+Choose instance type (t2.micro, t3.medium, etc.)
+Select key pair
+Add security group
+Add user data (optional)
+Click Create
+Now this template is used by:
+Auto Scaling Group
+Manual EC2 launch
+CI/CD automation
+
+Q.What is Configuration Drift?
+Configuration drift happens when a running EC2 instance gradually becomes different from the original AMI it was created from.
+Over time, changes are made manually or automatically, and the instance no longer matches the baseline image.
+
+Example of Configuration Drift
+Imagine:
+You launch 5 EC2 instances from the same AMI.
+Later:
+One server gets a manual security patch.
+Another server gets a new package installed.
+One server has a config file modified.
+Another server’s firewall rules are changed.
+Now all 5 servers are different.
+That difference from the original AMI is called configuration drift.
+
+Interview-Ready Answer (Short Version)
+You can say this directly:
+In AWS, an AMI is a template used to launch EC2 instances.
+A Golden AMI is a pre-configured, secure, and tested AMI created by the organization as a standard baseline.
+We use Golden AMIs to ensure consistency, security, faster deployment, and to avoid manual configuration errors.
+
+Senario Based Ques & Ans.
+=========================
+
+Scenario 1 — 50 servers needed with same configuration
+Q: You installed Java, Nginx, and your app on one EC2. Now you need 50 identical servers. What will you do?
+I will create a custom AMI from the configured EC2 and use it in a Launch Template. 
+Then attach the template to an Auto Scaling Group to launch 50 identical instances quickly without manual setup.
+
+Scenario 2 — Avoid configuration drift
+Q: Developers manually install packages on servers and configurations differ. How do you standardize?
+I create a Golden AMI with all required software and enforce that all new EC2 instances launch only from this AMI via Launch Template. 
+This removes manual configuration and drift.
+
+Server crashed, need quick recovery
+Q: Production server crashed. How do you restore fast?
+Launch a new EC2 from the latest AMI backup. Since AMI contains OS, software, and configs, the server is restored in minutes.
+
+Scenario 5 — Patch update on all servers
+Q: A security patch is required on 100 servers. How do you handle?
+Update one server → create new AMI (v2) → update Launch Template to new AMI version → perform rolling update via Auto Scaling. 
+No manual patching on 100 servers.
+-> Rolling update in Auto Scaling means replacing old EC2 instances with new ones gradually, 
+instead of all at once. This ensures zero downtime because some instances are always running while others are being updated.
+
+Q.Scenario 6 — Difference between AMI and snapshot confusion
+Think of a laptop:
+AMI = Full laptop setup (Windows + software + settings)
+Snapshot = Backup of only the hard drive data
+If your laptop crashes:
+Snapshot restores files
+AMI recreates the full laptop system
+

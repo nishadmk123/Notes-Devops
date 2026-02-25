@@ -1,0 +1,52 @@
+IAM: (Amazon Machine Image)
+
+Q.What is IAM (Identity and Access Management)?
+It controles who can access aws and what they are allowed to do.
+It manages users, groups, roles, and permissions securely.
+IAM ensures only authorized people or services can perform specific actions.
+
+Q.Key Components of IAM
+Users – Individual identities with login credentials.
+Groups – Collection of users with shared permissions.
+Roles – Temporary access granted to users or services.
+Policies – JSON documents that define permissions.
+
+Q.What is the difference between Role and User?
+A User has permanent credentials (username/password or access keys).
+A Role provides temporary credentials and is assumed when needed.
+Roles are more secure for services like EC2.
+
+What is an IAM Policy?
+An IAM Policy is a permission document (JSON) that defines:
+What actions are allowed or denied
+On which resources
+Under what conditions
+this policy alone does nothing until attached to:
+A User
+A Group
+A Role
+
+Policy → Attached to Role → Role Attached to Service
+
+Senario Based Ques & Ans.
+=========================
+
+Scenario: A new developer joins your team and needs access to S3 but not EC2. What will you do?
+Answer: Create a user for the developer and attach a policy that allows only S3 access. Do not grant EC2 permissions. This follows least privilege. Add the user to a Developer group if needed.
+
+Scenario: An EC2 instance needs permission to access an S3 bucket securely. What is the best practice?
+Answer: Create an IAM Role with S3 access permissions. Attach the role to the EC2 instance. Avoid storing access keys inside the instance. Roles provide secure temporary credentials.
+
+Scenario: You want all employees in the HR team to have the same access. How do you manage it?
+Answer: Create an IAM group called HR. Attach required policies to the group. Add all HR users to that group. This makes permission management easy.
+
+Scenario: A user should only view resources but not modify them. What type of access is needed?
+Answer: Attach a Read-Only policy to the user or group. This allows viewing resources without making changes. It prevents accidental modifications.
+
+Company A wants to allow Company B to access S3.
+Solution:
+Create a Role in Account A
+Add trust policy allowing Account B
+Attach S3 access policy to the role
+Account B assumes the role
+

@@ -1,0 +1,239 @@
+EC2: (Elastic Compute Cloud)
+
+Q.What is EC2? 
+EC2 is a virtual computer in the cloud.
+Instead of buying a physical computer (server), Amazon lets you rent one online.
+Where you can:
+Install software on it
+Run applications
+Host websites
+Store and process data
+And you only pay for what you use.
+
+Q.What are different EC2 instance types?
+General Purpose (t3, t4g)
+Compute Optimized (c5)
+Memory Optimized (r5)
+Storage Optimized (i3)
+GPU Instances (p3)
+Each type is used for different workloads.
+
+Q.AMI (Amazon Machine Image)
+It is a template used to create EC2 instances. It contains OS and pre-installed software.
+
+Why it is used:
+To quickly launch new servers without installing everything manually.
+Example:
+Ubuntu AMI
+Windows Server AMI
+Think of it as:
+The “blueprint” of your virtual computer.
+
+SQ.ecurity Groups
+A firewall that controls inbound and outbound traffic to EC2.
+Who can access your server
+Which ports are open (like 80, 443, 22)
+
+Q.Elastic IP
+A static public IP address that does not change after restarting an instance.
+Why it is used:
+Normally, when you stop and start an instance, IP changes.
+Elastic IP keeps the same IP always.
+
+Q.VPC (Virtual Private Cloud) - Your own private area inside AWS cloud.
+Your private network inside AWS.
+Why it is used: To control
+Network settings
+Subnets
+IP ranges
+Internet access
+
+Senario Based Ques & Ans.
+=========================
+
+Q.Imagine you want to create an online shopping website:
+EC2 → Runs your website
+AMI → Ubuntu OS installed
+Instance Type → Medium size for performance
+EBS → Stores product images & data
+Security Group → Allows HTTP (port 80)
+Elastic IP → Permanent website IP
+Load Balancer → Handles many customers
+Auto Scaling → Adds servers during sales
+
+Q.How do you make EC2 highly available?
+Deploy in multiple Availability Zones
+Use Load Balancer
+Use Auto Scaling
+Use Multi-AZ architecture
+
+Q.Explain EC2 architecture.
+EC2 architecture consists of a VPC with public and private subnets. 
+Web servers are deployed in public subnets, databases in private subnets. 
+An Internet Gateway provides internet access. 
+A Load Balancer distributes traffic across EC2 instances in multiple Availability Zones, and Auto Scaling ensures scalability and high availability.
+
+Q.How have you used EC2 in your project?
+In my project, we deployed web applications on EC2 instances inside a VPC. 
+Web servers were placed in public subnets and application servers in private subnets. 
+We used Auto Scaling groups for scaling and Application Load Balancer for traffic distribution. 
+EBS volumes were used for persistent storage.
+
+Q.How do you secure EC2 instances?
+Use Security Groups (least privilege access)
+Use NACL for subnet-level control
+Use IAM Roles (no hardcoded credentials)
+Disable password login
+Use private subnets for backend servers
+
+Q.CPU fine but app slow — network checks?
+Check network throughput limits
+Check EBS performance
+Check cross-AZ latency
+DNS resolution issues
+Packet drops in Flow Logs
+
+Q.How does Auto Scaling work internally?
+When CPU crosses threshold (e.g., 70%), CloudWatch triggers scaling policy → new instance launches.
+
+Q.How do you handle zero downtime deployment?
+Use Load Balancer
+Deploy new instances
+Register new instances to target group
+Deregister old instances
+Use rolling update strategy
+
+Q.How do you attach extra storage to EC2?
+Create EBS volume
+Attach to EC2
+Format volume
+Mount to directory
+
+Q.How do you reduce EC2 cost?
+Use Spot instances
+Use Auto Scaling
+Right-size instances
+Use Reserved Instances
+Stop unused instances
+
+Q.EC2 instance is not reachable via SSH. What will you check?
+Check Security Group → Port 22 open?
+Check correct key pair?
+Check instance status?
+Check NACL rules?
+Check public IP?
+Check route table & Internet Gateway?
+
+Q.Website hosted on EC2 is not loading. What will you do?
+Security group (port 80/443 open?)
+Web service running?
+Load balancer health check?
+Target group registered?
+Instance CPU usage?
+
+Q.EC2 CPU utilization is very high. What actions will you take?
+Check running processes (top command)
+Check logs
+Scale out using Auto Scaling
+Upgrade instance type
+Optimize application
+
+Q.Instance is in running state but not accessible.
+Security group issue
+NACL blocking
+Wrong route table
+OS firewall blocking
+SSH service not running
+
+Q.EBS volume is attached but not visible inside instance.
+Solution:
+Check lsblk
+Format volume
+Mount volume
+Update /etc/fstab
+
+Q.Instance terminated accidentally. How to recover?
+If backup AMI exists → launch new instance
+If EBS snapshot exists → restore volume
+Otherwise → data lost
+
+Q.One EC2 instance is slow. What will you check first?”
+First, I will check CloudWatch metrics like CPU, memory, and network. 
+Then I will SSH into the instance and check running processes. 
+Based on analysis, I will either optimize application or scale the instance.
+
+Q.Private subnet EC2 needs internet access. How?
+Attach NAT Gateway in public subnet
+Add route 0.0.0.0/0 → NAT in private subnet route table
+This allows outbound internet without exposing instance publicly.
+
+Q.EC2 in public subnet but no public IP. Why?
+Auto-assign public IP disabled
+Launched manually without Elastic IP
+Using custom network interface without public IP
+
+Q.Two EC2s in same VPC can't communicate. Why?
+Security group doesn’t allow inbound from other instance
+NACL blocking traffic
+OS firewall blocking
+Different subnets with wrong route table
+
+Q.How EC2 instances communicate to each other
+Each EC2 gets a private IP from the subnet.
+Communication between instances in the same VPC is internal, so the private IP is used (no need for public IPs or Internet Gateway).
+Example:
+EC2 A: 10.0.1.5
+EC2 B: 10.0.1.10
+On EC2 A: ping 10.0.1.10 → should work if security allows it.
+
+
+Q.Communication Between EC2s in Different VPCs in the SAME REGION
+Goal: EC2s talk to each other using private IPs.
+
+Step 1: Create a VPC Peering Connection
+Go to AWS VPC → Peering Connections → Create Peering
+Choose VPC A (your VPC) and VPC B (the other VPC)
+
+Step 2: Accept the Peering Connection
+Go to VPC → Peering Connections → Accept on the other VPC
+
+Step 3: Update Route Tables
+Go to VPC → Route Tables → Edit Routes
+In VPC A route table, add a route:
+Destination = CIDR of VPC B
+Target = Peering Connection ID
+Repeat in VPC B (destination = VPC A CIDR, target = same peering)
+
+Step 4: Update Security Groups
+Allow traffic from the other VPC’s CIDR in inbound rules
+Example: EC2 in VPC A wants to SSH to EC2 in VPC B → allow TCP 22 from VPC B CIDR
+
+Step 5: Test Connectivity
+On EC2 A: ping <EC2 B private IP> or ssh <EC2 B private IP>
+
+
+Communication Between EC2s in Different VPCs in DIFFERENT REGIONS
+Goal: EC2s talk to each other using private IPs across regions.
+Option 1: Inter-Region VPC Peering (Simplest)
+
+Step 1: Create Peering Connection
+Go to VPC → Peering Connections → Create Peering
+Choose VPC A (Region 1) → VPC B (Region 2)
+
+Step 2: Accept Peering
+Go to Region 2 → VPC → Peering Connections → Accept
+
+Step 3: Update Route Tables
+In VPC A route table, add route: Destination = VPC B CIDR, Target = Peering Connection ID
+In VPC B route table, add route: Destination = VPC A CIDR, Target = Peering Connection ID
+
+Step 4: Update Security Groups
+Allow inbound traffic from the other VPC’s CIDR
+
+Step 5: Test Connectivity
+Ping or SSH using the private IP of the EC2 in the other region
+
+Option 2: Using Public IPs (if no peering)
+Each EC2 must have a public IP
+Security groups must allow incoming traffic from the other EC2 public IP
+Traffic goes over the internet (not private, slower)

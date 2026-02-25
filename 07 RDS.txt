@@ -1,0 +1,27 @@
+RDS: (Relational Database Service)
+
+RDS is a managed database service
+
+ 1  clear
+    2  sudo apt install docker -y
+    3  sudo apt remove docker docker-engine docker.io containerd runc
+    4  ~sudo apt remove docker docker-engine docker.io containerd runc
+    5  ~sudo apt remove docker docker-engine docker.io containerd runc
+    6  sudo apt remove docker docker-engine docker.io containerd runc
+    7  clear
+    8  sudo apt update -y
+    9  sudo apt install ca-certificates curl gnupg lsb-release -y
+   10  sudo apt install docker.io -y
+   11  sudo systemctl enable docker
+   12  sudo systemctl start docker
+   13  sudo systemctl status docker
+   14  cleear
+   15  clear
+   16  history
+
+   sudo docker run --rm -p 80:3000 \
+-e DB_HOST="database-1.cxaaqqs0q291.ap-south-1.rds.amazonaws.com" \
+-e DB_USER="admin" \
+-e DB_PASSWORD="mnbvcxz-123" \
+-d philippaul/node-mysql-app:02
+

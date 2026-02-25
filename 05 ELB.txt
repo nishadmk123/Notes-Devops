@@ -1,0 +1,93 @@
+ELB: (Elastic Load Balancing)
+
+Q.Amazon Web Services Elastic Load Balancing (ELB) – Detailed Guide
+Elastic Load Balancing (ELB) is a service that automatically distributes incoming traffic across multiple targets 
+(like EC2 instances, containers, IP addresses, or Lambda functions) to ensure high availability, fault tolerance, and scalability.
+
+Q.Types of Load Balancers in AWS
+AWS provides 3 types of load balancers:
+
+| Type                          | Full Name | Works On             | Use Case                                   |
+| ----------------------------- | --------- | -------------------- | ------------------------------------------ |
+| **Application Load Balancer** | ALB       | Layer 7 (HTTP/HTTPS) | Web apps, microservices, path/host routing |
+| **Network Load Balancer**     | NLB       | Layer 4 (TCP/UDP)    | High performance, low latency, static IP   |
+| **Gateway Load Balancer**     | GWLB      | Layer 3              | Firewalls, network appliances              |
+
+Q.What is ASG (Auto Scaling Group)?
+Amazon EC2 Auto Scaling automatically increases or decreases the number of EC2 instances based on load.
+
+Q.Connection Between ELB and ASG (Very Important)
+They are designed to work together.
+User → ELB → EC2 (managed by ASG)
+
+Q.What happens in real time:
+Traffic increases
+CPU increase
+ASG launches new EC2
+ELB automatically registers new EC2
+Traffic is balanced
+If EC2 fails:
+ELB marks it unhealthy
+ASG terminates it
+ASG launches new EC2
+ELB starts sending traffic to new EC2
+Fully automatic. No manual work.
+
+Senario Based Ques & Ans.
+=========================
+
+Traffic spike crashes one server
+Q: Your website becomes very slow during a sale. One EC2 shows 95% CPU and stops responding. How do ELB and ASG handle this?
+Application Load Balancer health check fails for that instance → stops sending traffic to it.
+Amazon EC2 Auto Scaling detects unhealthy instance → terminates and launches a new one.
+New instance auto-registers with ALB → traffic resumes normally.
+
+One Availability Zone goes down
+Q: AZ-A fails completely. How is the app still available?
+ALB is deployed across multiple AZs and routes only to healthy targets.
+ASG maintains instances in remaining AZs and can launch more there.
+
+How ELB “talks” to ASG
+Q: What is the internal connection between them?
+ASG attaches to ALB Target Group.
+Instances launched by ASG auto-register to target group.
+ALB health status feeds into ASG replacement logic.
+
+Q: Design a highly available, auto-scaling web app.
+Internet → ALB → Target Group → ASG → EC2 (Multi-AZ)
+ALB for distribution
+ASG for scaling/self-healing
+Health checks for reliability
+
+One-line summary (interview closing line)
+ALB distributes traffic,
+ASG maintains the right number of healthy servers, 
+and together they provide auto-scaling, self-healing, and high availability.
+
+--> ALB and Load Balancing Across AZs
+
+1>ALB Basics
+An ALB is a type of load balancer that works at Layer 7 (HTTP/HTTPS).
+It can route traffic based on URL paths, host headers, or query strings.
+
+2>Multi-AZ Deployment
+You can attach an ALB to multiple Availability Zones.
+When you do this:
+The ALB creates load balancer nodes in each AZ you enable.
+These nodes share a single DNS name.
+Traffic from clients is automatically routed to the nearest healthy node (AZ), but the ALB can send traffic to instances in any AZ that are registered as targets.
+
+3>Routing Across AZs
+Target Groups: ALB uses target groups containing your EC2 instances (or ECS tasks).
+You can register instances in different AZs in the same target group.
+Health checks ensure only healthy instances receive traffic.
+
+Example:
+ALB spans AZ-A and AZ-B.
+Target group has 2 instances in AZ-A and 1 instance in AZ-B.
+ALB distributes incoming requests evenly to all healthy instances, across AZs.
+
+4>Best Practices for ALB Across AZs
+Enable cross-zone load balancing (AWS allows this in ALB by default).
+Always register at least one instance per AZ to avoid routing failures if an AZ goes down.
+Use auto-scaling so instance count can adjust in all AZs automatically.

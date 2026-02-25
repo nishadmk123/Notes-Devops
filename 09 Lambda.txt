@@ -1,0 +1,54 @@
+Lambda
+
+AWS Lambda is a serverless compute service provided by Amazon Web Services that lets you run code without managing servers.
+It is event driven
+
+1️⃣ You Write Code
+Supported runtimes:
+Python
+Node.js
+Java
+Go
+.NET
+Custom runtime
+2️⃣ You Upload to Lambda
+3️⃣ Trigger Happens
+Triggers can be
+Amazon S3 (file upload)
+Amazon API Gateway (HTTP request)
+Amazon DynamoDB (data change)
+Amazon EventBridge (scheduled job)
+Amazon SNS (message)
+Amazon SQS (queue message)
+4️⃣ Lambda Runs in a Container
+Internally:
+AWS creates a lightweight container
+Allocates memory
+Executes your function
+Destroys or reuses container
+
+Q.What is Cold Start?
+
+Cold start happens when:
+No container is available
+AWS creates new runtime environment
+Cold start delay:
+100ms – few seconds
+Java & .NET usually slower
+VPC-enabled Lambdas slower (ENI creation)
+Solution:
+Provisioned concurrency
+Keep function warm
+
+Note: 
+1. Allocates memory (128 MB to 10 GB)
+2. Max execution time: 15 minutes
+3. Zip upload: 50 MB (direct), 250 MB (unzipped), Container image: 10 GB
+
+Q.What is AWS Lambda?
+AWS Lambda is a serverless compute service that runs event-driven code without provisioning or managing servers. 
+It automatically scales and charges per execution time.
+
+Q.What are its limitations?
+It has a 15-minute execution limit, cold start latency, stateless nature, limited environment control, concurrency limits, 
+and can become costly for continuous workloads.

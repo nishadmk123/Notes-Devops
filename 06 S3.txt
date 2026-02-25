@@ -1,0 +1,111 @@
+S3: (Simple storage Service)
+
+Q.What is Amazon S3?
+Amazon S3 is object storage in AWS used to store files as objects in buckets
+ex. Images, videos, backups, logs, PDFs, static websites, datasets, etc.
+
+Use Amazon S3 when:
+Storing backups
+Hosting static website
+Storing logs
+Storing images/videos
+Data lake / archive
+
+Use Amazon EBS when:
+Installing Linux/Windows OS
+Running database (MySQL, Oracle)
+Application files needing fast disk
+
+You launch an EC2 server:
+OS installed on EBS
+Application logs pushed to S3
+Daily DB backup stored in S3
+Application running from EBS
+
+S3 = Store files
+EBS = Server disk
+
+Q.S3 Lifecycle Policy (Automatic Cost Optimization)
+In Amazon S3, a Lifecycle Policy automatically moves objects between storage classes based on age and can also delete them after a time.
+
+| Storage Class        | Access Speed  | Cost     | Use Case              |
+| -------------------- | ------------- | -------- | --------------------- |
+| Standard             | Milliseconds  | High     | Active data           |
+| Standard-IA          | Milliseconds  | Medium   | Rare access           |
+| One Zone-IA          | Milliseconds  | Low      | Re-creatable data     |
+| Glacier Instant      | Milliseconds  | Lower    | Archive, instant need |
+| Glacier Flexible     | Minutes–Hours | Very low | Old backups           |
+| Glacier Deep Archive | 12+ hours     | Cheapest | Legal/archive         |
+
+1) S3 Standard
+For frequently accessed data
+Low latency, high throughput
+Used for active files, websites, apps
+Examples:
+Website images
+Application files
+Daily accessed logs
+
+2) S3 Standard – Infrequent Access (IA)
+Accessed rarely, but must be available quickly
+Cheaper than Standard
+Retrieval cost applies
+Examples:
+Monthly backups
+Old reports
+
+3) S3 One Zone – IA
+Same as IA but stored in one AZ only
+Even cheaper
+Risk: if AZ fails, data lost
+Examples:
+Re-creatable backup
+Temporary data
+
+4) S3 Glacier Instant Retrieval
+Archive data, but need instant access when required
+Very low storage cost
+Examples:
+Medical records
+Old project data occasionally needed
+
+5) S3 Glacier Flexible Retrieval
+Very cheap archive
+Retrieval takes minutes to hours
+Examples:
+5-year-old backups
+Compliance data
+
+6) S3 Glacier Deep Archive
+Cheapest storage in S3
+Retrieval takes hours (12+)
+For data you almost never access
+Examples:
+7–10 year legal records
+
+Q: Can I mount S3 as a disk like EBS?
+A: No. S3 is object storage accessed via API/URL, not a filesystem disk.
+
+Q: Which is cheaper for backup?
+A: S3.
+
+Q: Where is OS installed?
+A: EBS.
+
+Q: Logs are increasing daily and S3 bill is high. What will you do?
+A: Configure S3 Lifecycle to transition old logs to IA/Glacier and expire after retention.
+
+Q: Can Lifecycle move existing objects?
+A: Yes.
+
+Q: Can it work by folder?
+A: Yes, using prefix (e.g., backup/, logs/).
+
+Note -> Lifecycle = Move old data to cheaper storage automatically + delete when not needed
+
+Pro Tip (Cost Saving)
+
+Combine:
+Lifecycle Policy
+Proper storage class selection
+Versioning (optional, for safety)

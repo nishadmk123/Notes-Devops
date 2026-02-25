@@ -1,0 +1,55 @@
+EBS: (Elastic Block Store)
+
+Q.What is EBS (Elastic Block Store) in AWS?
+Amazon EBS is a block storage service used with EC2 instances.
+It provides persistent, high-performance storage that behaves like a virtual hard disk attached to a server.
+Even if the EC2 instance is stopped or terminated, data in EBS remains safe (unless you delete the volume).
+
+Q.Types of EBS Volumes
+| Type            | Use Case         | Example                   |
+| --------------- | ---------------- | ------------------------- |
+| gp3 / gp2 (SSD) | General purpose  | Web servers, apps         |
+| io1 / io2 (SSD) | High IOPS        | Databases (Oracle, MySQL) |
+| st1 (HDD)       | Throughput heavy | Logs, big data            |
+| sc1 (HDD)       | Cold storage     | Backup, archives          |
+
+Q.Key Features of EBS (with definitions)
+| Key Point          | Definition                                                |
+| ------------------ | --------------------------------------------------------- |
+| Persistent Storage | Data remains even if EC2 stops/terminates                 |
+| Block Storage      | Works like a raw hard disk (not file storage like S3/EFS) |
+| AZ Specific        | Volume lives in one Availability Zone                     |
+| Snapshots          | Backup of volume stored in S3                             |
+| Resizable          | Increase size without downtime                            |
+| Encryption         | Supports encryption at rest                               |
+| High Performance   | SSD/HDD types based on need                               |
+| Detach/Attach      | Can move volume to another EC2                            |
+| Root Volume        | Used to install OS of EC2                                 |
+
+Q.Your EC2 crashed but data is important. What will you do?
+Detach the EBS volume from the crashed EC2 and attach it to a new EC2 instance. Mount the volume and recover the data.
+
+Q.How do you take backup of EBS?
+By creating EBS Snapshots. Snapshots are stored in S3 and can be used to recreate volumes.
+
+Q.EBS volume is full. How to increase size without downtime?
+Modify the EBS volume size from AWS console → then extend filesystem using resize2fs or xfs_growfs in Linux.
+
+Q.How encryption works in EBS?
+EBS supports encryption using AWS KMS. Data at rest, in transit, and snapshots are encrypted.
+
+Q.What is root volume in EC2?
+The EBS volume where the OS of EC2 is installed.
+
+Q.One-Line Definitions (Quick Revision)
+
+EBS: Persistent block storage for EC2.
+Snapshot: Backup of EBS stored in S3.
+IOPS: Input/Output operations per second.
+Root Volume: OS disk of EC2.
+Multi-Attach: One EBS to multiple EC2 (io1/io2 only).
+gp3: Best general purpose SSD.
+AZ Specific: EBS lives in one AZ.
+
+Q.Why EBS and not S3?
+“EBS is block storage used as a disk for EC2, whereas S3 is object storage accessed via API/HTTP.”

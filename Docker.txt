@@ -1,0 +1,122 @@
+Docker 
+-> It is a containerization plateform used to developing, packaging, shiping and running the application
+-> it provide the ablity to run a application in isolated enviornment called container.
+
+Installation Docker
+===================
+| Command                          | Purpose                             |
+| -------------------------------- | ----------------------------------- |
+| `sudo apt-get install docker.io` | Install Docker                      |
+| `sudo systemctl status docker`   | Check if Docker service is running  |
+| `docker ps`                      | List running containers             |
+| `sudo usermod -aG docker manish` | Add user to docker group            |
+| `newgrp docker`                  | Refresh group membership            |
+| `docker ps`                      | Works because permission is granted |
+
+
+Docker Installation
+=====================
+sudo apt remove docker.io -y
+sudo apt purge docker.io -y
+sudo apt autoremove -y
+clear
+sudo rm -rf /var/lib/docker
+sudo rm -rf /var/lib/containerd
+sudo apt update
+sudo apt install ca-certificates curl gnupg -y
+sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+sudo chmod a+r /etc/apt/keyrings/docker.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
+https://download.docker.com/linux/ubuntu \
+$(. /etc/os-release && echo "$VERSION_CODENAME") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt update
+sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+docker buildx version
+systemctl status docker
+docker buildx build -t testimage .
+docker buildx build -t testimage .
+systemctl start docker
+clear
+
+Q. Docker basic commands
+# docker build .
+# docker build -t <app-name>:<version> .
+# docker images (To show all images)
+
+# docker ps (Running Containers/Images)
+# docker ps -a (All Container Running/Stopped)
+
+# docker run -p 3000:3000 <image-id>
+# docker run -d -p 3000:3000 <image-id>
+
+# docker tag myapp:latest nishadmk123/myapp:latest (Docker tag is kind of label assigned to docker image)
+# docker login -u nishadmk123
+# docker push nishadmk123/myapp:latest
+# docker info
+# docker logout
+
+Docker won’t let you delete an image as long as any tag still references it.
+# docker rmi <img-id> (it will not work)
+# docker rmi -f <img-id>
+# docker container prune (Remove stopped container)
+
+Q. How to safely delete it
+Option 1 — remove all tags first:
+# docker rmi nishadmk123/py-app:v0 py-app:v0
+Only deletes the tag references.
+Once all references are gone, Docker deletes the image layers automatically.
+Option 2 — force delete:
+# docker rmi -f 72a6330e618a
+Removes all tags at once.
+Should be used carefully.
+
+Q. High-Level Docker Architecture
+
+1.Docker Client – This is the command-line tool (docker) that lets you communicate with Docker. You type commands like docker run or docker build, and it sends them to the Docker Daemon.
+2.Docker Daemon (dockerd) – The background service that actually builds, runs, and manages containers. It listens for requests from the client and manages all Docker objects.
+3.Docker Engine – The full platform combining the Docker client, daemon, and container runtime. It is responsible for creating, running, and managing containers efficiently.
+4.Container Runtime – The software that executes containers, sets up their filesystem, networking, and resource limits. Examples include runc, which uses OS features like namespaces and cgroups.
+5.Docker Registry – A storage system for Docker images. You can pull images from public registries like Docker Hub or push your own images to share with others.
+6.Docker Objects – The key building blocks Docker manages:
+Images (blueprints),
+Containers (running instances),
+Volumes (persistent storage),
+Networks (container communication).
+
+1. Docker Client
+Command you run: docker build, docker pull, docker run
+The Docker CLI talks to the Docker Daemon using:
+1.REST API
+2.Unix socket (/var/run/docker.sock)
+Note: The client does NOT create containers directly.
+
+2. Docker Daemon (dockerd)
+This is the brain of Docker.
+Listens to Docker API requests
+Manages images
+Creates containers
+Manages networks & volumes
+Talks to container runtime
+It runs as a background service on your machine.
+
+3. Docker Engine 
+It is the complete runtime environment installed when you install Docker.
+Docker Engine includes:
+Docker Daemon
+REST API
+CLI
+
+4. Container Runtime
+container runtime is the software responsible for running containers on a host machine. 
+It pulls the container image, sets up the filesystem, networking, and resource limits, 
+and then starts the container process using OS features like namespaces and cgroups. It ensures isolation, security, and efficient resource usage.
+In Kubernetes, common container runtimes include containerd and CRI-O, which internally use low-level runtimes like runc to interact with the Linux kernel.
+In short, a container runtime is the engine that actually executes and manages containers.
+
+Q. Why can't we push without tag Short Interview Answer (Concise & Strong)
+“Docker requires a tag before pushing because the tag defines the full repository path,
+including the namespace and version. Without a properly tagged image like username/repository:tag, 
+Docker doesn’t know which registry or repository to push the image to.”
+
+“In Docker, an image must have a fully qualified name before pushing. The format is [registry]/[username]/[repository]:[tag].
